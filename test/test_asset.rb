@@ -707,6 +707,27 @@ class BundledAssetTest < Sprockets::TestCase
     end
   end
 
+  test "SCSS file to be processed by ERB without erb extension raises exception" do
+    exception = assert_raise Sprockets::EngineError do
+      asset("erb_without_extension.scss").to_s
+    end
+    assert exception.message =~ /but have not added the .erb extension./
+  end
+
+  test "Less file to be processed by ERB without erb extension raises exception" do
+    exception = assert_raise Sprockets::EngineError do
+      asset("erb_without_extension.less").to_s
+    end
+    assert exception.message =~ /but have not added the .erb extension./
+  end
+
+  test "Coffee file to be processed by ERB without erb extension raises exception" do
+    exception = assert_raise Sprockets::EngineError do
+      asset("erb_without_extension.coffee").to_s
+    end
+    assert exception.message =~ /but have not added the .erb extension./
+  end
+
   test "require_directory requires all child files in alphabetical order" do
     assert_equal(
       "ok(\"b.js.erb\");\n",

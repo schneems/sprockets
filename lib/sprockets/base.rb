@@ -379,6 +379,22 @@ module Sprockets
         else
           StaticAsset.new(index, logical_path, pathname)
         end
+      rescue => e
+        annotate_exception!(e, pathname)
+        raise e
+      end
+
+      def annotate_exception!(exception, pathname)
+        return false unless missing_erb_extension?(pathname)
+        exception.extend(Sprockets::EngineError)
+        exception.sprockets_annotation = "You are using erb in your file: " +
+          "#{pathname} but have not added the .erb extension.\n" +
+          "Please change the file name to #{pathname}.erb and try again."
+      end
+
+      def missing_erb_extension?(pathname)
+        return false if attributes_for(pathname).processors.include?(Tilt::ERBTemplate)
+        return true  if File.read(pathname) =~ /<%=?(.+)%>/
       end
 
       def cache_key_for(path, options)
